@@ -5,9 +5,46 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(238, 174, 202);
+  background: radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(148, 187, 233, 1) 100%);
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.custom-marker {
+  background-color: red;
+  color: white;
+  width: 20px;
+  height: 40x;
+  text-align: center;
+  padding: 2px;
+  border-radius: 25px;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding-top: 24px;
+}
+
+.buttons button {
+  background-color: white;
+  color: black;
+  border-radius: 24px;
+  padding: .75rem;
+  font-size: large;
+  cursor: pointer;
+  border: none;
+}
+
+.buttons button:hover{
+  border: 1px solid black
 }
