@@ -1,10 +1,10 @@
 import createNewDate from "./createNewDate";
 import axios from "axios";
 
-const URL = 'https://viso-task-70f56-default-rtdb.europe-west1.firebasedatabase.app/marks.json';
+const URL = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL : '';
 
 const pushNewMark = async (e: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
-    const { data } = await axios.get(URL);
+    const { data } = await axios.get(URL+'/marks.json');
     if (data) {
         const array = [...Object.values(data), {
             location: {
@@ -13,10 +13,9 @@ const pushNewMark = async (e: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
             },
             timestamp: createNewDate()
         }]
-        axios.put(URL, array);
+        axios.put(URL+'/marks.json', array);
     } else {
-        axios.put(URL, [{
-
+        axios.put(URL+'/marks.json', [{
             location: {
                 lat: e.lngLat.lat,
                 long: e.lngLat.lng

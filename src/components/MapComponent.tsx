@@ -4,22 +4,18 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import axios from 'axios';
 import findKeyByIndex from '../utils/findKeyByIndex';
 import pushNewMark from '../utils/pushNewMark';
+import { deleteLastMark, deleteAllMarks } from '../utils/deleteMark';
 
 
-if(process.env.REACT_APP_API_KEY){
+if (process.env.REACT_APP_API_KEY) {
     mapboxgl.accessToken = process.env.REACT_APP_API_KEY
 }
-
-// mapboxgl.accessToken = process.env.REACT_APP_API_KEY ? process.env.REACT_APP_API_KEY : '' ;
-// mapboxgl.accessToken = 'pk.eyJ1IjoidmxhZHNhc255ayIsImEiOiJjbHVjcjF4bm4xN3hkMmtxbnFoN25qM2cwIn0.xHsT2LFWZ6FOBmY-BDWJ8w';
-
-// const URL = 'https://viso-task-70f56-default-rtdb.europe-west1.firebasedatabase.app/marks.json';
 
 const URL = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL : '';
 
 const MapComponent: React.FC = () => {
     const mapContainerRef = useRef<HTMLDivElement>(null);
-    const markerIndicesRef = useRef<number[]>([]); 
+    const markerIndicesRef = useRef<number[]>([]);
     const [markers, setMarkers] = useState<mapboxgl.Marker[]>([]);
 
     useEffect(() => {
@@ -34,7 +30,7 @@ const MapComponent: React.FC = () => {
 
         const fetchData = async () => {
             try {
-                const response = await axios.get(URL+'/marks.json');
+                const response = await axios.get(URL + '/marks.json');
                 const data = response.data;
 
                 if (data) {
@@ -51,8 +47,8 @@ const MapComponent: React.FC = () => {
             }
         };
 
-         //add new mark
-         const addNewMark = (lng: number, lat: number, index: number) => {
+        //add new mark
+        const addNewMark = (lng: number, lat: number, index: number) => {
             const marker = new mapboxgl.Marker({
                 draggable: true
             })
@@ -91,39 +87,13 @@ const MapComponent: React.FC = () => {
         return () => map.remove();
     }, []);
 
-
-    
-
-    const deleteLastMark = async () => {
-        const lastMarker = markers.pop(); //
-        lastMarker?.remove();
-        try {
-            const { data } = await axios.get(URL+'/marks.json');
-            const array = [...Object.values(data)]
-            array.pop();
-            markerIndicesRef.current.pop();
-            axios.put(URL+'/marks.json', array);
-        } catch (error) {
-            console.log(error)
-        }
-
-    };
-
-    const deleteAllMarks = async () => {
-        markers.forEach(marker => {
-            marker.remove();
-            markerIndicesRef.current.pop();
-        });
-        axios.put(URL+'/marks.json', []);
-    }
-
     return <>
         <div
             ref={mapContainerRef}
             style={{ width: '80vw', height: '80vh', cursor: 'pointer', marginTop: '50px' }} />
         <div className='buttons'>
-            <button onClick={deleteLastMark}>Clear last mark</button>
-            <button onClick={deleteAllMarks}>Clear all marks</button>
+            <button onClick={() => deleteLastMark({ markers, markerIndicesRef })}>Clear last mark</button>
+            <button onClick={() => deleteAllMarks({ markers, markerIndicesRef })}>Clear all marks</button>
         </div>
 
     </>;
