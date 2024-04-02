@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import axios from 'axios';
-import findKeyByIndex from './findKeyByIndex';
-import pushNewMark from './pushNewMark';
+import findKeyByIndex from '../utils/findKeyByIndex';
+import pushNewMark from '../utils/pushNewMark';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoidmxhZHNhc255ayIsImEiOiJjbHVjcjF4bm4xN3hkMmtxbnFoN25qM2cwIn0.xHsT2LFWZ6FOBmY-BDWJ8w';
 
