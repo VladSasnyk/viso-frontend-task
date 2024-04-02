@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import axios from 'axios';
-import findKeyByIndex from '../utils/findKeyByIndex';
+
+//functions
+
 import pushNewMark from '../utils/pushNewMark';
 import { deleteLastMark, deleteAllMarks } from '../utils/deleteMark';
+import addingExistingMarks from '../utils/addingExistingMarks';
+import addNewMark from '../utils/addNewMark';
 
 
 if (process.env.REACT_APP_API_KEY) {
     mapboxgl.accessToken = process.env.REACT_APP_API_KEY
 }
-
-const URL = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL : '';
 
 const MapComponent: React.FC = () => {
     const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -19,7 +20,6 @@ const MapComponent: React.FC = () => {
     const [markers, setMarkers] = useState<mapboxgl.Marker[]>([]);
 
     useEffect(() => {
-        // map create
         const map = new mapboxgl.Map({
             container: mapContainerRef.current!,
             style: 'mapbox://styles/mapbox/streets-v11',
@@ -27,63 +27,14 @@ const MapComponent: React.FC = () => {
             zoom: 8,
             attributionControl: false
         });
-
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(URL + '/marks.json');
-                const data = response.data;
-
-                if (data) {
-                    Object.values(data).forEach((item: any, index: number) => {
-                        const { location } = item;
-                        const { lat, long } = location;
-                        addNewMark(long, lat, index);
-                    });
-                }
-
-
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        //add new mark
-        const addNewMark = (lng: number, lat: number, index: number) => {
-            const marker = new mapboxgl.Marker({
-                draggable: true
-            })
-                .setLngLat([lng, lat])
-                .addTo(map);
-            marker.getElement().innerHTML = `<div class="custom-marker">${index + 1}</div>`;
-            markerIndicesRef.current.push(index);
-            marker.on('dragend', () => {
-                updateMarkerPosition(index, marker.getLngLat());
-            });
-            setMarkers(prevMarkers => [...prevMarkers, marker])
-        };
-        //update mark position when dragg and fetching new location
-        const updateMarkerPosition = async (index: number, lngLat: mapboxgl.LngLat) => {
-            const key = await findKeyByIndex(index);
-            axios.patch(`${URL}/marks/${key}.json`, {
-                location: {
-                    lat: lngLat.lat,
-                    long: lngLat.lng
-                }
-            });
-
-        };
-
         map.on('load', async () => {
-            fetchData();
+            addingExistingMarks(map,markerIndicesRef,setMarkers);
         });
-
-
         map.on('click', (e) => {
             pushNewMark(e);
-            addNewMark(e.lngLat.lng, e.lngLat.lat, markerIndicesRef.current.length);
+            addNewMark(map, e.lngLat.lng, e.lngLat.lat,markerIndicesRef.current.length, markerIndicesRef, setMarkers);
         }
         );
-
         return () => map.remove();
     }, []);
 
