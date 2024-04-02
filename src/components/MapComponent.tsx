@@ -5,9 +5,17 @@ import axios from 'axios';
 import findKeyByIndex from '../utils/findKeyByIndex';
 import pushNewMark from '../utils/pushNewMark';
 
-mapboxgl.accessToken = 'pk.eyJ1IjoidmxhZHNhc255ayIsImEiOiJjbHVjcjF4bm4xN3hkMmtxbnFoN25qM2cwIn0.xHsT2LFWZ6FOBmY-BDWJ8w';
 
-const URL = 'https://viso-task-70f56-default-rtdb.europe-west1.firebasedatabase.app/marks.json';
+if(process.env.REACT_APP_API_KEY){
+    mapboxgl.accessToken = process.env.REACT_APP_API_KEY
+}
+
+// mapboxgl.accessToken = process.env.REACT_APP_API_KEY ? process.env.REACT_APP_API_KEY : '' ;
+// mapboxgl.accessToken = 'pk.eyJ1IjoidmxhZHNhc255ayIsImEiOiJjbHVjcjF4bm4xN3hkMmtxbnFoN25qM2cwIn0.xHsT2LFWZ6FOBmY-BDWJ8w';
+
+// const URL = 'https://viso-task-70f56-default-rtdb.europe-west1.firebasedatabase.app/marks.json';
+
+const URL = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL : '';
 
 const MapComponent: React.FC = () => {
     const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -26,7 +34,7 @@ const MapComponent: React.FC = () => {
 
         const fetchData = async () => {
             try {
-                const response = await axios.get(URL);
+                const response = await axios.get(URL+'/marks.json');
                 const data = response.data;
 
                 if (data) {
@@ -60,7 +68,7 @@ const MapComponent: React.FC = () => {
         //update mark position when dragg and fetching new location
         const updateMarkerPosition = async (index: number, lngLat: mapboxgl.LngLat) => {
             const key = await findKeyByIndex(index);
-            axios.patch(`https://viso-task-70f56-default-rtdb.europe-west1.firebasedatabase.app/marks/${key}.json`, {
+            axios.patch(`${URL}/marks/${key}.json`, {
                 location: {
                     lat: lngLat.lat,
                     long: lngLat.lng
@@ -90,11 +98,11 @@ const MapComponent: React.FC = () => {
         const lastMarker = markers.pop(); //
         lastMarker?.remove();
         try {
-            const { data } = await axios.get(URL);
+            const { data } = await axios.get(URL+'/marks.json');
             const array = [...Object.values(data)]
             array.pop();
             markerIndicesRef.current.pop();
-            axios.put(URL, array);
+            axios.put(URL+'/marks.json', array);
         } catch (error) {
             console.log(error)
         }
@@ -106,7 +114,7 @@ const MapComponent: React.FC = () => {
             marker.remove();
             markerIndicesRef.current.pop();
         });
-        axios.put(URL, []);
+        axios.put(URL+'/marks.json', []);
     }
 
     return <>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const URL = 'https://viso-task-70f56-default-rtdb.europe-west1.firebasedatabase.app/marks.json';
+const URL = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL : '';
 
 const findKeyByIndex = async (index: number): Promise<string | null> => {
     const response = await axios.get(URL);
