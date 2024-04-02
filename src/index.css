@@ -26,6 +26,10 @@ code {
   padding: 2px;
   border-radius: 25px;
 }
+.custom-marker-content {
+  cursor: default;
+  pointer-events: auto;
+}
 
 .buttons {
   display: flex;
@@ -47,4 +51,8 @@ code {
 
 .buttons button:hover{
   border: 1px solid black
+}
+
+.border-yellow{
+  border: 3px solid yellow;
 }

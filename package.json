@@ -16,6 +16,7 @@
     "react-dom": "^18.2.0",
     "react-map-gl": "^7.1.7",
     "react-scripts": "5.0.1",
+    "supercluster": "^8.0.1",
     "typescript": "^4.9.5",
     "use-places-autocomplete": "^4.0.1",
     "web-vitals": "^2.1.4"
@@ -43,5 +44,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/supercluster": "^7.1.3"
   }
 }

@@ -5,9 +5,10 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 //functions
 
 import pushNewMark from '../utils/pushNewMark';
-import { deleteLastMark, deleteAllMarks } from '../utils/deleteMark';
+import { deleteLastMark, deleteAllMarks} from '../utils/deleteMark';
 import addingExistingMarks from '../utils/addingExistingMarks';
-import addNewMark from '../utils/addNewMark';
+import addNewMark from '../utils/markOperation';
+
 
 
 if (process.env.REACT_APP_API_KEY) {
@@ -19,6 +20,8 @@ const MapComponent: React.FC = () => {
     const markerIndicesRef = useRef<number[]>([]);
     const [markers, setMarkers] = useState<mapboxgl.Marker[]>([]);
 
+
+
     useEffect(() => {
         const map = new mapboxgl.Map({
             container: mapContainerRef.current!,
@@ -27,21 +30,24 @@ const MapComponent: React.FC = () => {
             zoom: 8,
             attributionControl: false
         });
+
         map.on('load', async () => {
-            addingExistingMarks(map,markerIndicesRef,setMarkers);
+            addingExistingMarks(map, markerIndicesRef, setMarkers);
         });
+
         map.on('click', (e) => {
             pushNewMark(e);
-            addNewMark(map, e.lngLat.lng, e.lngLat.lat,markerIndicesRef.current.length, markerIndicesRef, setMarkers);
+            addNewMark(map, e.lngLat.lng, e.lngLat.lat, markerIndicesRef.current.length, markerIndicesRef, setMarkers);
         }
         );
+
         return () => map.remove();
     }, []);
 
     return <>
         <div
             ref={mapContainerRef}
-            style={{ width: '80vw', height: '80vh', cursor: 'pointer', marginTop: '50px' }} />
+            style={{ width: '80vw', height: '80vh', marginTop: '50px' }} />
         <div className='buttons'>
             <button onClick={() => deleteLastMark({ markers, markerIndicesRef })}>Clear last mark</button>
             <button onClick={() => deleteAllMarks({ markers, markerIndicesRef })}>Clear all marks</button>
@@ -51,3 +57,4 @@ const MapComponent: React.FC = () => {
 };
 
 export default MapComponent;
+
